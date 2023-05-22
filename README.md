@@ -1,81 +1,22 @@
-# Turborepo starter
+# Wallet Sync System
 
-This is an official starter Turborepo.
+The Wallet Sync System is a revolutionary trustless client-server project that allows Ledger Live users to synchronize their personal data, including crypto accounts, across multiple platforms without revealing any sensitive information to the server host (Ledger). This project leverages the power of asymmetric cryptography, utilizing Ledger hardware wallets to generate the keys required to encrypt data for secure storage and retrieval on the server.
 
-## Using this example
+The initial targets of the Wallet Sync System are:
 
-Run the following command:
+- Ledger Live Desktop
+- Ledger Live Mobile
+- Ledger Safari Extension
 
-```sh
-npx create-turbo@latest
-```
+Although primarily designed for Ledger Live, the Wallet Sync System can theoretically work with any wallet.
 
-## What's inside?
+This repository is a monorepo that houses the following packages:
 
-This Turborepo includes the following packages/apps:
+### /apps/client-test
+This is a minimal client implementation that utilizes the client SDK (Software Development Kit). It serves as an example of how to implement a client for the Wallet Sync System.
 
-### Apps and Packages
+### /apps/server
+This package contains a server with an in-memory database for testing purposes. It's designed to simulate the server environment without requiring a full server setup, making it ideal for development and testing.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+### /packages/client-sdk
+The Client SDK contains all the logic necessary for the Wallet Sync System to operate, including cryptography and synchronization functionality. This package forms the backbone of the client-side operations of the Wallet Sync System.
