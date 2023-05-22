@@ -1,0 +1,23 @@
+{
+  "name": "client-test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:dev": "npx nodemon",
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node build/index.js"
+  },
+  "dependencies": {
+    "client-sdk": "workspace:*",
+    "isomorphic-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.12",
+    "eslint-config-custom": "workspace:*",
+    "nodemon": "^2.0.22",
+    "rimraf": "^5.0.0",
+    "ts-node": "^10.9.1",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.0.4"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node.js Script",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["es6"],
+    "module": "CommonJS",
+    "target": "ES2019",
+    "allowJs": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true
+  }
+}
