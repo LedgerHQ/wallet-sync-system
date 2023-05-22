@@ -1,6 +1,6 @@
 # Wallet Sync System
 
-The Wallet Sync System is a revolutionary trustless client-server project that allows Ledger Live users to synchronize their personal data, including crypto accounts, across multiple platforms without revealing any sensitive information to the server host (Ledger). This project leverages the power of asymmetric cryptography, utilizing Ledger hardware wallets to generate the keys required to encrypt data for secure storage and retrieval on the server.
+The Wallet Sync System is a trustless client-server project that allows Ledger Live users to synchronize their personal data, including crypto accounts, across multiple platforms without revealing any sensitive information to the server host (Ledger). This project leverages the power of asymmetric cryptography, utilizing Ledger hardware wallets to generate the keys required to encrypt data for secure storage and retrieval from the server.
 
 The initial targets of the Wallet Sync System are:
 
