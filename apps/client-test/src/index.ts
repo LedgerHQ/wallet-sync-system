@@ -68,6 +68,8 @@ async function main() {
   })
 
   client.start();
+
+  // client.poll();
 }
 
 main();

@@ -2,12 +2,12 @@
   "name": "@ledgerhq/wss-sdk",
   "version": "0.0.0",
   "license": "Apache-2.0",
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index.js",
+  "module": "./lib-es/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
-    "/lib",
-    "/lib-es"
+    "./lib",
+    "./lib-es"
   ],
   "scripts": {
     "build": "rimraf lib-es lib && tsc -p prod.tsconfig.json && tsc -p prod-esm.tsconfig.json",
