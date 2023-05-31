@@ -5,12 +5,12 @@ export const schemaAccountMetadataBase = z.object({
     currencyId: z.string(),
     seedId: z.string(),
     derivationPath: z.string(),
+    derivationMode: z.string(),
 });
 
 export const schemaAccountMetadataXPub = schemaAccountMetadataBase.extend({
     type: z.literal("xPub"),
     xPub: z.string(),
-    derivationMode: z.string(),
 });
 
 export const schemaAccountMetadataAddress = schemaAccountMetadataBase.extend({

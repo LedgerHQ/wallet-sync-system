@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { schemaEncryptedClientData } from "shared";
 import { publicProcedure, router } from "./trpc";
 import { MemoryDatabase } from "./MemoryDatabase";
+import { schemaEncryptedClientData } from "./types/schemas";
 
 const database = new MemoryDatabase();
 
@@ -38,6 +38,8 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       const { clientTimeHint, entries } = input;
 
-      database.updateData(entries);
+      database.updateData(entries, clientTimeHint);
     }),
 });
+
+export type AppRouter = typeof appRouter;

@@ -1,8 +1,8 @@
 {
-  "name": "shared",
+  "name": "@ledgerhq/wss-shared",
   "version": "0.0.0",
-  "main": "./index.tsx",
-  "types": "./index.tsx",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
   "license": "MIT",
   "scripts": {
     "lint": "eslint \"**/*.ts*\""
@@ -14,6 +14,8 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "@trpc/server": "^10.23.0",
+    "superjson": "^1.12.3",
     "zod": "^3.21.4"
   }
 }

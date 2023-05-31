@@ -6,10 +6,9 @@ import {
 import SuperJSON from "superjson";
 import crypto from "crypto";
 
-import type { AppRouter } from "../../apps/server/src";
+import type { AppRouter } from "@ledgerhq/wss-shared";
 import { AccountMetadata } from "./dataTypes/Account/types";
 import { getAccountId } from "./dataTypes/Account/logic";
-import { ClientDataRecord } from "../../apps/server/src/MemoryDatabase";
 import { v5 as uuidv5 } from "uuid";
 import { UUIDV5_NAMESPACE } from "./constants";
 
@@ -20,6 +19,15 @@ type SaveDataParams = {
 type Auth = {
   privateKey: Buffer;
   publicKey: Buffer;
+};
+
+export type ClientDataRecord = {
+  id: string;
+  ownerId: string;
+  dataTypeId: number;
+  encryptedData: string;
+  createdAt: number;
+  updatedAt: number;
 };
 
 type WalletSyncClientParams = {

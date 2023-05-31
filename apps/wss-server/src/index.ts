@@ -1,5 +1,5 @@
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
-import { appRouter } from "./router";
+import { appRouter } from "@ledgerhq/wss-shared";
 
 async function main() {
   const server = createHTTPServer({
@@ -10,5 +10,3 @@ async function main() {
 }
 
 main();
-
-export type AppRouter = typeof appRouter;

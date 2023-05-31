@@ -1,16 +1,18 @@
 {
-  "name": "@ledgerhq/client-test",
+  "name": "@ledgerhq/wss-server",
   "version": "1.0.0",
-  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "start:dev": "npx nodemon",
-    "build": "rimraf build && tsc",
+    "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"
   },
   "dependencies": {
-    "@ledgerhq/wss-sdk": "workspace:*",
-    "isomorphic-fetch": "^3.0.0"
+    "@trpc/server": "^10.23.0",
+    "dotenv": "^16.0.3",
+    "@ledgerhq/wss-shared": "workspace:*",
+    "superjson": "^1.12.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.12",
