@@ -42,7 +42,7 @@ async function main() {
     auth,
   });
 
-  client.setEpoch(0);
+  client.setVersion(0);
 
   client.saveData({
     accounts: [

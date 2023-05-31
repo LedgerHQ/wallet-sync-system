@@ -1,78 +1,62 @@
-type JSONValue =
-    | string
-    | number
-    | boolean
-    | JSONObject
-    | JSONArray;
+import {DataType, atomic} from "./types/api";
 
-interface JSONObject {
-    [x: string]: JSONValue;
-}
-
-interface JSONArray extends Array<JSONValue> { }
-
-export type DataType = {
-    id: number;
-    type: string;
-    jsonSchema: JSONObject,
-}
-
-export type ClientDataRecord = {
-    id: string;
-    ownerId: string;
-    dataTypeId: number;
-    encryptedData: string;
-    createdAt: number;
-    updatedAt: number;
-}
-
-type GetNewDataRecordsQuery = {
+export type Record = {
+  datatypeId: DataType;
   ownerId: string;
-  fromUpdatedAt: number | null;
-};
+  version: number;
+  payload: string;
+  createdAt: number;
+  updatedAt: number;
+  details?: string;
+}
 
 export class MemoryDatabase {
-  _dataType: Map<number, DataType> = new Map();
-  _clientDataRecordById: Map<string, ClientDataRecord> = new Map();
-  constructor() {}
+  _atomicRecords: Map<{ datatypeId: DataType, ownerId: string }, Record> = new Map();
 
-  getClientDataRecordsForUser(query: GetNewDataRecordsQuery): ClientDataRecord[] {
-    const clientDataRecords = Array.from(this._clientDataRecordById, ([key, value]) => value);
-
-    return clientDataRecords.filter(
-      (clientDataRecord) => {
-        if (query.fromUpdatedAt !== null) {
-            return clientDataRecord.ownerId === query.ownerId && clientDataRecord.updatedAt > query.fromUpdatedAt;
-        }
-        return clientDataRecord.ownerId === query.ownerId;
-      }
-    );
+  constructor() {
   }
 
-  updateData(entries: Omit<ClientDataRecord, "updatedAt" | "createdAt">[], timeHint?: number) {
+  atomicGet(
+    datatypeId: DataType,
+    ownerId: string,
+    from: number | undefined
+  ): atomic.get.Response {
+
+    const record = this._atomicRecords.get({datatypeId, ownerId})
+
+    if (record == undefined)
+      return {status: "no-data"};
+
+    if (from == record.version)
+      return {status: "up-to-date"};
+
+    return {status: "out-of-sync", ...record};
+  }
+
+  atomicPost(
+    datatypeId: DataType,
+    ownerId: string,
+    version: number,
+    payload: string,
+    details: string | undefined
+  ): atomic.post.Response {
+    const record = this._atomicRecords.get({datatypeId, ownerId})
+
+    if (record !== undefined && version != record.version + 1)
+      return {status: "out-of-sync", ...record};
+
     const now = Date.now();
 
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
+    this._atomicRecords.set({datatypeId, ownerId}, {
+      datatypeId,
+      ownerId,
+      version,
+      payload,
+      createdAt: record?.createdAt ?? now,
+      updatedAt: now,
+      details
+    });
 
-      const existingEntry = this._clientDataRecordById.get(entry.id);
-
-      if (existingEntry) {
-        if (!timeHint || timeHint > existingEntry.updatedAt) {
-          this._clientDataRecordById.set(entry.id, {
-            ...existingEntry,
-            ...entry,
-            updatedAt: now,
-          });    
-        } 
-      } else {
-        this._clientDataRecordById.set(entry.id, {
-          createdAt: now,
-          ...entry,
-          updatedAt: now,
-        });
-  
-      }
-    }
+    return {status: "updated"};
   }
 }

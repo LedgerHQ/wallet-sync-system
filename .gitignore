@@ -35,5 +35,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# jetbrains
+.idea/
+.lh/
+
 lib
 lib-es
