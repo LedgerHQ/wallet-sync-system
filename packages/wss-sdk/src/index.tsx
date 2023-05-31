@@ -7,10 +7,10 @@ import SuperJSON from "superjson";
 import crypto from "crypto";
 
 import type { AppRouter } from "@ledgerhq/wss-shared";
-import { AccountMetadata } from "./dataTypes/Account/types";
-import { getAccountId } from "./dataTypes/Account/logic";
+import { getAccountId } from "./dataTypes/Account/1.0.0/logic";
 import { v5 as uuidv5 } from "uuid";
 import { UUIDV5_NAMESPACE } from "./constants";
+import { AccountMetadata } from "./dataTypes/Account/1.0.0/types";
 
 type SaveDataParams = {
   accounts: AccountMetadata[];
@@ -35,6 +35,17 @@ type WalletSyncClientParams = {
   url: string;
   auth: Auth;
 };
+
+/*
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'der',
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'der',
+      },
+*/
 
 export class WalletSyncClient {
   private _epoch: number | null = null;
@@ -66,8 +77,6 @@ export class WalletSyncClient {
       ownerId,
     });
 
-    console.log(response);
-
     const { entries } = response;
 
     const mostRecentData = entries.reduce((acc, entry) => {
@@ -75,6 +84,23 @@ export class WalletSyncClient {
     }, 0);
 
     this._epoch = mostRecentData;
+
+    const privKey = crypto.createPrivateKey({
+      key: this._params.auth.privateKey,
+      format: "der",
+      type: "pkcs8",
+    });
+
+    const decryptedEntries = entries.map((entry) => {
+      const decryptedData = crypto.privateDecrypt(
+        privKey,
+        Buffer.from(entry.encryptedData, "base64")
+      );
+      console.log(decryptedData);
+      const parsedData = JSON.parse(decryptedData.toString());
+      console.log(parsedData);
+      return entry;
+    });
   }
 
   saveData(data: SaveDataParams) {
@@ -138,6 +164,10 @@ export class WalletSyncClient {
     // stopping the update loop
     clearInterval(this._intervalHandle);
     this._intervalHandle = null;
+  }
+
+  isStarted(): boolean {
+    return this._intervalHandle !== null;
   }
 
   setEpoch(epoch: number) {

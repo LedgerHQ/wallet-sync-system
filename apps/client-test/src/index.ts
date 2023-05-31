@@ -67,6 +67,13 @@ async function main() {
     ]
   })
 
+  /*
+  example:
+  client.subscribe((items) => {
+    // get new accounts items.accounts
+  })
+  */
+
   client.start();
 
   // client.poll();

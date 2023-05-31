@@ -1,6 +1,6 @@
 import { v5 as uuidv5 } from "uuid";
 import { AccountMetadata } from "./types";
-import { UUIDV5_NAMESPACE } from "../../constants";
+import { UUIDV5_NAMESPACE } from "../../../constants";
 
 export function getAccountId(accountMetadata: AccountMetadata) {
   const aggregatedId =
