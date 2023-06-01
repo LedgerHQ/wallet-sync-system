@@ -23,7 +23,7 @@ type WalletSyncClientParams = {
 };
 
 export class WalletSyncClient {
-  private _version: number | null = null;
+  private _version: number | undefined = undefined;
   private _intervalHandle: NodeJS.Timer | null = null;
   private _params: WalletSyncClientParams;
 
@@ -52,6 +52,7 @@ export class WalletSyncClient {
     const response = await this._trpc.atomicGet.query({
       datatypeId: DataType.Accounts,
       ownerId,
+      from: this._version
     });
 
     switch (response.status) {
