@@ -11,7 +11,7 @@ export type Record = {
 }
 
 export class MemoryDatabase {
-  _atomicRecords: Map<{ datatypeId: DataType, ownerId: string }, Record> = new Map();
+  _atomicRecords: Map<string, Record> = new Map();
 
   constructor() {
   }
@@ -22,7 +22,7 @@ export class MemoryDatabase {
     from: number | undefined
   ): atomic.get.Response {
 
-    const record = this._atomicRecords.get({datatypeId, ownerId})
+    const record = this._atomicRecords.get(datatypeId + ownerId)
 
     if (record == undefined)
       return {status: "no-data"};
@@ -40,14 +40,14 @@ export class MemoryDatabase {
     payload: string,
     details: string | undefined
   ): atomic.post.Response {
-    const record = this._atomicRecords.get({datatypeId, ownerId})
+    const record = this._atomicRecords.get(datatypeId + ownerId)
 
     if (record !== undefined && version != record.version + 1)
       return {status: "out-of-sync", ...record};
 
     const now = Date.now();
 
-    this._atomicRecords.set({datatypeId, ownerId}, {
+    this._atomicRecords.set(datatypeId + ownerId, {
       datatypeId,
       ownerId,
       version,
