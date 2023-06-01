@@ -3,6 +3,7 @@ import {publicProcedure, router} from "./trpc";
 import {MemoryDatabase} from "./MemoryDatabase";
 import {schemaEncryptedClientData} from "./types/schemas";
 import {DataType} from "./types/api";
+import { logger } from "./logger";
 
 const database = new MemoryDatabase();
 
@@ -16,6 +17,8 @@ export const appRouter = router({
       })
     )
     .query(async ({input}) => {
+      logger.info(`atomicGet from ${input.ownerId}. From ${input.from}`);
+
       return database.atomicGet(
         input.datatypeId,
         input.ownerId,
@@ -34,6 +37,9 @@ export const appRouter = router({
       })
     )
     .mutation(async ({input}) => {
+      logger.info(`atomicPost from ${input.ownerId}. Version: ${input.version}`);
+      logger.silly(`${input.payload}`);
+
       return database.atomicPost(
         input.datatypeId,
         input.ownerId,
