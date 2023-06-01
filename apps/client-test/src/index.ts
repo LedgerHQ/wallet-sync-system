@@ -1,34 +1,10 @@
-import { WalletSyncClient } from "@ledgerhq/wss-sdk"
-import { generateKeyPair } from "crypto";
+import {WalletSyncClient} from "@ledgerhq/wss-sdk"
 import 'isomorphic-fetch';
+import * as crypto from "crypto";
 
-type AsymetricKeys = {
-  privateKey: Buffer,
-  publicKey: Buffer
-}
-
-function generateAuth(): Promise<AsymetricKeys> {
+function generateAuth(): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    generateKeyPair('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'der',
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'der',
-      },
-    }, (error, publicKey, privateKey) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve({
-        publicKey,
-        privateKey
-      });
-    });
+    resolve(crypto.randomBytes(32))
   })
 }
 
