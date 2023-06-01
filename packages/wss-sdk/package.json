@@ -23,8 +23,9 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@trpc/client": "^10.23.0",
     "@ledgerhq/wss-shared": "workspace:*",
+    "@trpc/client": "^10.23.0",
+    "rxjs": "^7.8.1",
     "superjson": "^1.12.3",
     "uuid": "^9.0.0",
     "zod": "^3.21.4"
