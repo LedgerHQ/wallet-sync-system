@@ -16,15 +16,10 @@ type SaveDataParams = {
   accounts: AccountMetadata[];
 };
 
-type Auth = {
-  privateKey: Buffer;
-  publicKey: Buffer;
-};
-
 type WalletSyncClientParams = {
   pollFrequencyMs: number;
   url: string;
-  auth: Auth;
+  auth: Buffer;
 };
 
 export class WalletSyncClient {
@@ -48,7 +43,7 @@ export class WalletSyncClient {
 
   private async _poll() {
     const ownerId = uuidv5(
-      this._params.auth.publicKey.toString("base64"),
+      this._params.auth.toString("base64"),
       UUIDV5_NAMESPACE
     );
 
@@ -67,16 +62,11 @@ export class WalletSyncClient {
       case "out-of-sync":
         this._version = response.version;
 
-        const privKey = crypto.createPrivateKey({
-          key: this._params.auth.privateKey,
-          format: "der",
-          type: "pkcs8",
-        });
+        const decipher = crypto.createDecipheriv("aes-256-cbc", this._params.auth, crypto.randomBytes(16));
 
-        const decryptedData = crypto.privateDecrypt(
-          privKey,
-          Buffer.from(response.payload, "base64")
-        );
+        let decryptedData = decipher.update(response.payload, "base64", "utf-8");
+        decryptedData += decipher.final("utf8");
+
         const parsedData = JSON.parse(decryptedData.toString());
 
         console.log("Server has an update", response.version, response.updatedAt, parsedData);
@@ -88,26 +78,22 @@ export class WalletSyncClient {
   saveData(data: SaveDataParams) {
 
     const ownerId = uuidv5(
-      this._params.auth.publicKey.toString("base64"),
+      this._params.auth.toString("base64"),
       UUIDV5_NAMESPACE
     );
 
-    const pubKey = crypto.createPublicKey({
-      key: this._params.auth.publicKey,
-      format: "der",
-      type: "spki",
-    });
-
     const serializedData = JSON.stringify(data);
 
-    const encryptedData = crypto.publicEncrypt(pubKey, Buffer.from(serializedData));
+    const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, crypto.randomBytes(16));
+    let encryptedData = cipher.update(serializedData, "utf-8", "base64");
+    encryptedData += cipher.final("base64");
 
     this._trpc.atomicPost.mutate({
       datatypeId: DataType.Accounts,
       ownerId,
       version: (this._version ?? 0 ) + 1,
       details: "PoC/0.0.0",
-      payload: encryptedData.toString("base64")
+      payload: encryptedData
     });
   }
 
