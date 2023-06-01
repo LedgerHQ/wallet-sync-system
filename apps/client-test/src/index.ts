@@ -43,6 +43,10 @@ async function main() {
     ]
   })
 
+  client.observable().subscribe((accountMetadata) => {
+    console.log("new account metadata: ", accountMetadata);
+  });
+
   /*
   example:
   client.subscribe((items) => {

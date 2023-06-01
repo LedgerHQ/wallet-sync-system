@@ -6,11 +6,13 @@ import {
 import SuperJSON from "superjson";
 import crypto from "crypto";
 
-import type {AppRouter} from "@ledgerhq/wss-shared";
+import type { AppRouter } from "@ledgerhq/wss-shared";
 import { AccountMetadata } from "./dataTypes/Account/1.0.0/types";
-import {v5 as uuidv5} from "uuid";
-import {UUIDV5_NAMESPACE} from "./constants";
-import {DataType} from "@ledgerhq/wss-shared/src/types/api";
+import { v5 as uuidv5 } from "uuid";
+import { UUIDV5_NAMESPACE } from "./constants";
+import { DataType } from "@ledgerhq/wss-shared/src/types/api";
+import { Observable, Subject } from "rxjs";
+import { schemaAccountMetadata } from "./dataTypes/Account/1.0.0/schemas";
 
 type SaveDataParams = {
   accounts: AccountMetadata[];
@@ -27,12 +29,15 @@ export class WalletSyncClient {
   private _intervalHandle: NodeJS.Timer | null = null;
   private _params: WalletSyncClientParams;
 
-  private _iv = crypto.randomBytes(16)
+  private _iv = crypto.randomBytes(16);
 
+  private _subject: Subject<AccountMetadata> = new Subject();
   private _trpc: CreateTRPCProxyClient<AppRouter>;
+  private _userId: string;
 
   constructor(params: WalletSyncClientParams) {
     this._params = params;
+    this._userId = uuidv5(params.auth, UUIDV5_NAMESPACE);
     this._trpc = createTRPCProxyClient<AppRouter>({
       transformer: SuperJSON,
       links: [
@@ -43,16 +48,15 @@ export class WalletSyncClient {
     });
   }
 
-  private async _poll() {
-    const ownerId = uuidv5(
-      this._params.auth.toString("base64"),
-      UUIDV5_NAMESPACE
-    );
+  observable(): Observable<AccountMetadata> {
+    return this._subject;
+  }
 
+  private async _poll() {
     const response = await this._trpc.atomicGet.query({
       datatypeId: DataType.Accounts,
-      ownerId,
-      from: this._version
+      ownerId: this._userId,
+      from: this._version,
     });
 
     switch (response.status) {
@@ -65,38 +69,53 @@ export class WalletSyncClient {
       case "out-of-sync":
         this._version = response.version;
 
-        const decipher = crypto.createDecipheriv("aes-256-cbc", this._params.auth, this._iv);
+        const decipher = crypto.createDecipheriv(
+          "aes-256-cbc",
+          this._params.auth,
+          this._iv
+        );
 
-        let decryptedData = decipher.update(response.payload, "base64", "utf-8");
+        let decryptedData = decipher.update(
+          response.payload,
+          "base64",
+          "utf-8"
+        );
         decryptedData += decipher.final("utf8");
 
         const parsedData = JSON.parse(decryptedData);
 
-        console.log("Server has an update: version", response.version, " updated at ", response.updatedAt, parsedData);
+        console.log(
+          "Server has an update: version",
+          response.version,
+          " updated at ",
+          response.updatedAt,
+          parsedData
+        );
+        const safeData = schemaAccountMetadata.parse(parsedData);
+
+        this._subject.next(safeData);
 
         break;
     }
   }
 
   saveData(data: SaveDataParams) {
-
-    const ownerId = uuidv5(
-      this._params.auth.toString("base64"),
-      UUIDV5_NAMESPACE
-    );
-
     const serializedData = JSON.stringify(data);
 
-    const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, this._iv);
+    const cipher = crypto.createCipheriv(
+      "aes-256-cbc",
+      this._params.auth,
+      this._iv
+    );
     let encryptedData = cipher.update(serializedData, "utf-8", "base64");
     encryptedData += cipher.final("base64");
 
     this._trpc.atomicPost.mutate({
       datatypeId: DataType.Accounts,
-      ownerId,
-      version: (this._version ?? 0 ) + 1,
+      ownerId: this._userId,
+      version: (this._version ?? 0) + 1,
       details: "PoC/0.0.0",
-      payload: encryptedData
+      payload: encryptedData,
     });
   }
 
