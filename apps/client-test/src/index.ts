@@ -43,8 +43,8 @@ async function main() {
     ]
   })
 
-  client.observable().subscribe((accountMetadata) => {
-    console.log("new account metadata: ", accountMetadata);
+  client.observable().subscribe((walletData) => {
+    console.log("new wallet data: ", walletData);
   });
 
   /*

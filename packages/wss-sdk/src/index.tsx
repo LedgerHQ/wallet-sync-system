@@ -13,6 +13,9 @@ import { UUIDV5_NAMESPACE } from "./constants";
 import { DataType } from "@ledgerhq/wss-shared/src/types/api";
 import { Observable, Subject } from "rxjs";
 import { schemaAccountMetadata } from "./dataTypes/Account/1.0.0/schemas";
+import { z } from "zod";
+import { schemaWalletDecryptedData } from "./dataTypes/schemas";
+import { WalletDecryptedData } from "./dataTypes/types";
 
 type SaveDataParams = {
   accounts: AccountMetadata[];
@@ -31,7 +34,7 @@ export class WalletSyncClient {
 
   private _iv = crypto.randomBytes(16);
 
-  private _subject: Subject<AccountMetadata> = new Subject();
+  private _subject: Subject<WalletDecryptedData> = new Subject();
   private _trpc: CreateTRPCProxyClient<AppRouter>;
   private _userId: string;
 
@@ -48,7 +51,7 @@ export class WalletSyncClient {
     });
   }
 
-  observable(): Observable<AccountMetadata> {
+  observable(): Observable<WalletDecryptedData> {
     return this._subject;
   }
 
@@ -91,7 +94,7 @@ export class WalletSyncClient {
           response.updatedAt,
           parsedData
         );
-        const safeData = schemaAccountMetadata.parse(parsedData);
+        const safeData = schemaWalletDecryptedData.parse(parsedData);
 
         this._subject.next(safeData);
 
