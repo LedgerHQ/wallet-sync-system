@@ -27,6 +27,8 @@ export class WalletSyncClient {
   private _intervalHandle: NodeJS.Timer | null = null;
   private _params: WalletSyncClientParams;
 
+  private _iv = crypto.randomBytes(16)
+
   private _trpc: CreateTRPCProxyClient<AppRouter>;
 
   constructor(params: WalletSyncClientParams) {
@@ -62,14 +64,14 @@ export class WalletSyncClient {
       case "out-of-sync":
         this._version = response.version;
 
-        const decipher = crypto.createDecipheriv("aes-256-cbc", this._params.auth, crypto.randomBytes(16));
+        const decipher = crypto.createDecipheriv("aes-256-cbc", this._params.auth, this._iv);
 
         let decryptedData = decipher.update(response.payload, "base64", "utf-8");
         decryptedData += decipher.final("utf8");
 
-        const parsedData = JSON.parse(decryptedData.toString());
+        const parsedData = JSON.parse(decryptedData);
 
-        console.log("Server has an update", response.version, response.updatedAt, parsedData);
+        console.log("Server has an update: version", response.version, " updated at ", response.updatedAt, parsedData);
 
         break;
     }
@@ -84,7 +86,7 @@ export class WalletSyncClient {
 
     const serializedData = JSON.stringify(data);
 
-    const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, crypto.randomBytes(16));
+    const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, this._iv);
     let encryptedData = cipher.update(serializedData, "utf-8", "base64");
     encryptedData += cipher.final("base64");
 
