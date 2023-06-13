@@ -12,8 +12,6 @@ import { v5 as uuidv5 } from "uuid";
 import { UUIDV5_NAMESPACE } from "./constants";
 import { DataType } from "@ledgerhq/wss-shared/src/types/api";
 import { Observable, Subject } from "rxjs";
-import { schemaAccountMetadata } from "./dataTypes/Account/1.0.0/schemas";
-import { z } from "zod";
 import { schemaWalletDecryptedData } from "./dataTypes/schemas";
 import { WalletDecryptedData } from "./dataTypes/types";
 
@@ -31,9 +29,6 @@ export class WalletSyncClient {
   private _version: number | undefined = undefined;
   private _intervalHandle: NodeJS.Timer | null = null;
   private _params: WalletSyncClientParams;
-
-  private _iv = crypto.randomBytes(16);
-
   private _subject: Subject<WalletDecryptedData> = new Subject();
   private _trpc: CreateTRPCProxyClient<AppRouter>;
   private _userId: string;
@@ -72,20 +67,22 @@ export class WalletSyncClient {
       case "out-of-sync":
         this._version = response.version;
 
+        const rawPayload = Buffer.from(response.payload, "base64");
+        const iv = rawPayload.slice(0, 16);
+        const encryptedData = rawPayload.slice(16);
+
         const decipher = crypto.createDecipheriv(
           "aes-256-cbc",
           this._params.auth,
-          this._iv
+          iv
         );
 
-        let decryptedData = decipher.update(
-          response.payload,
-          "base64",
-          "utf-8"
-        );
-        decryptedData += decipher.final("utf8");
+        const decryptedData = Buffer.concat([
+          decipher.update(encryptedData),
+          decipher.final(),
+        ]);
 
-        const parsedData = JSON.parse(decryptedData);
+        const parsedData = JSON.parse(decryptedData.toString());
 
         console.log(
           "Server has an update: version",
@@ -97,28 +94,29 @@ export class WalletSyncClient {
         const safeData = schemaWalletDecryptedData.parse(parsedData);
 
         this._subject.next(safeData);
-
         break;
     }
   }
 
   saveData(data: SaveDataParams) {
-    const serializedData = JSON.stringify(data);
+    const serializedData = Buffer.from(JSON.stringify(data), "utf8");
 
-    const cipher = crypto.createCipheriv(
-      "aes-256-cbc",
-      this._params.auth,
-      this._iv
-    );
-    let encryptedData = cipher.update(serializedData, "utf-8", "base64");
-    encryptedData += cipher.final("base64");
+    const iv = crypto.randomBytes(16);
+
+    const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, iv);
+    const encryptedData = Buffer.concat([
+      cipher.update(serializedData),
+      cipher.final(),
+    ]);
+
+    const rawPayload = Buffer.concat([iv, encryptedData]);
 
     this._trpc.atomicPost.mutate({
       datatypeId: DataType.Accounts,
       ownerId: this._userId,
       version: (this._version ?? 0) + 1,
       details: "PoC/0.0.0",
-      payload: encryptedData,
+      payload: rawPayload.toString("base64"),
     });
   }
 
