@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wss-sdk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "Apache-2.0",
   "main": "./lib/index.js",
   "module": "./lib-es/index.js",
