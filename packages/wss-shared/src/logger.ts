@@ -1,3 +1,4 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 import winston from "winston";
 
 const transports: winston.transport[] = [];
@@ -15,9 +16,11 @@ if (process.env.NODE_ENV !== "production") {
         winston.format.timestamp({
           format: "HH:mm:ss",
         }),
-        winston.format.printf(({ level, message, timestamp }) => {
-          return `[${timestamp}] ${level}: ${message}`;
-        })
+        winston.format.printf(
+          ({ level, message, timestamp }) =>
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            `[${timestamp}] ${level}: ${message}`
+        )
       ),
     })
   );

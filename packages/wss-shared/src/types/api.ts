@@ -5,53 +5,71 @@ export enum DataType {
   TransactionTags = "transaction-tags",
 }
 
-export namespace atomic {
-  export namespace get {
-    export type NoData = { status: "no-data" };
-    export type UpToDate = { status: "up-to-date" };
-    export type OutOfSync = {
-      status: "out-of-sync";
-      version: number;
-      payload: string;
-      createdAt: number;
-      updatedAt: number;
-      info?: string;
-    };
-    export type Response = UpToDate | NoData | OutOfSync;
-  }
-  export namespace post {
-    export type Request = { payload: string };
-    export type Updated = { status: "updated" };
-    export type OutOfSync = {
-      status: "out-of-sync";
-      version: number;
-      payload: string;
-      createdAt: number;
-      updatedAt: number;
-      info?: string;
-    };
-    export type Response = Updated | OutOfSync;
-  }
-}
+// Atomic
 
-export namespace incremental {
-  export type Update = {
-    version: number;
-    payload: string;
-    createdAt: number;
-    updatedAt: number;
-    info?: string;
-  };
-  export namespace get {
-    export type NoData = { status: "no-data" };
-    export type UpToDate = { status: "up-to-date" };
-    export type OutOfSync = { status: "out-of-sync"; updates: Update[] };
-    export type Response = UpToDate | NoData | OutOfSync;
-  }
-  export namespace post {
-    export type Request = { payload: string };
-    export type Updated = { status: "updated" };
-    export type OutOfSync = { status: "out-of-sync"; updates: Update[] };
-    export type Response = Updated | OutOfSync;
-  }
-}
+// Get
+
+export type AtomicGetNoData = { status: "no-data" };
+export type AtomicGetUpToDate = { status: "up-to-date" };
+export type AtomicGetOutOfSync = {
+  status: "out-of-sync";
+  version: number;
+  payload: string;
+  createdAt: number;
+  updatedAt: number;
+  info?: string;
+};
+
+export type AtomicGetResponse =
+  | AtomicGetNoData
+  | AtomicGetUpToDate
+  | AtomicGetOutOfSync;
+
+// Post
+
+export type AtomicPostRequest = { payload: string };
+export type AtomicPostUpdated = { status: "updated" };
+export type AtomicPostOutOfSync = {
+  status: "out-of-sync";
+  version: number;
+  payload: string;
+  createdAt: number;
+  updatedAt: number;
+  info?: string;
+};
+export type AtomicPostResponse = AtomicPostUpdated | AtomicPostOutOfSync;
+
+// Incremental
+
+export type IncrementalUpdate = {
+  version: number;
+  payload: string;
+  createdAt: number;
+  updatedAt: number;
+  info?: string;
+};
+
+// Get
+
+export type IncrementalGetNoData = { status: "no-data" };
+export type IncrementalGetUpToDate = { status: "up-to-date" };
+export type IncrementalGetOutOfSync = {
+  status: "out-of-sync";
+  updates: IncrementalUpdate[];
+};
+export type IncrementalGetResponse =
+  | IncrementalGetNoData
+  | IncrementalGetUpToDate
+  | IncrementalGetOutOfSync;
+
+// Post
+
+export type IncrementalPostRequest = { payload: string };
+export type IncrementalPostUpdated = { status: "updated" };
+export type IncrementalPostOutOfSync = {
+  status: "out-of-sync";
+  updates: IncrementalUpdate[];
+};
+export type IncrementalPostResponse =
+  | IncrementalPostUpdated
+  | IncrementalPostOutOfSync;

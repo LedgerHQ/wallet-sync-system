@@ -6,7 +6,11 @@
   "scripts": {
     "start:dev": "npx nodemon",
     "build": "rimraf build && tsc",
-    "start": "npm run build && node build/index.js"
+    "start": "npm run build && node build/index.js",
+    "format:check": "prettier --check \"src\"",
+    "format:fix": "prettier --write \"src\"",
+    "lint": "eslint --cache --ext .ts \"src\"",
+    "lint:fix": "eslint --cache --fix --ext .ts \"src\""
   },
   "dependencies": {
     "@ledgerhq/wss-sdk": "workspace:*",
@@ -14,6 +18,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.12",
+    "eslint": "^8.41.0",
     "eslint-config-custom": "workspace:*",
     "nodemon": "^2.0.22",
     "rimraf": "^5.0.0",

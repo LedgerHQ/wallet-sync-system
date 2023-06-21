@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { publicProcedure, router } from "./trpc";
 import { MemoryDatabase } from "./MemoryDatabase";
-import { schemaEncryptedClientData } from "./types/schemas";
 import { DataType } from "./types/api";
 import { logger } from "./logger";
 
@@ -16,8 +15,12 @@ export const appRouter = router({
         from: z.number().optional(),
       })
     )
-    .query(async ({ input }) => {
-      logger.info(`atomicGet from ${input.ownerId}. From ${input.from}`);
+    .query(({ input }) => {
+      logger.info(
+        `atomicGet from ${input.ownerId}. From ${
+          input.from || "no version specified"
+        }`
+      );
 
       return database.atomicGet(input.datatypeId, input.ownerId, input.from);
     }),
@@ -32,7 +35,7 @@ export const appRouter = router({
         details: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(({ input }) => {
       logger.info(
         `atomicPost from ${input.ownerId}. Version: ${input.version}`
       );
