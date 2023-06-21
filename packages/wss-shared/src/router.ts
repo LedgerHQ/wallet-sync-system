@@ -1,8 +1,8 @@
-import {z} from "zod";
-import {publicProcedure, router} from "./trpc";
-import {MemoryDatabase} from "./MemoryDatabase";
-import {schemaEncryptedClientData} from "./types/schemas";
-import {DataType} from "./types/api";
+import { z } from "zod";
+import { publicProcedure, router } from "./trpc";
+import { MemoryDatabase } from "./MemoryDatabase";
+import { schemaEncryptedClientData } from "./types/schemas";
+import { DataType } from "./types/api";
 import { logger } from "./logger";
 
 const database = new MemoryDatabase();
@@ -13,17 +13,13 @@ export const appRouter = router({
       z.object({
         datatypeId: z.nativeEnum(DataType),
         ownerId: z.string(),
-        from: z.number().optional()
+        from: z.number().optional(),
       })
     )
-    .query(async ({input}) => {
+    .query(async ({ input }) => {
       logger.info(`atomicGet from ${input.ownerId}. From ${input.from}`);
 
-      return database.atomicGet(
-        input.datatypeId,
-        input.ownerId,
-        input.from,
-      );
+      return database.atomicGet(input.datatypeId, input.ownerId, input.from);
     }),
 
   atomicPost: publicProcedure
@@ -33,11 +29,13 @@ export const appRouter = router({
         ownerId: z.string(),
         version: z.number(),
         payload: z.string(),
-        details: z.string().optional()
+        details: z.string().optional(),
       })
     )
-    .mutation(async ({input}) => {
-      logger.info(`atomicPost from ${input.ownerId}. Version: ${input.version}`);
+    .mutation(async ({ input }) => {
+      logger.info(
+        `atomicPost from ${input.ownerId}. Version: ${input.version}`
+      );
       logger.silly(`${input.payload}`);
 
       return database.atomicPost(

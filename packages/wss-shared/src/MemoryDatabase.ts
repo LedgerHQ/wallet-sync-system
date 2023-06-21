@@ -1,4 +1,4 @@
-import {DataType, atomic} from "./types/api";
+import { DataType, atomic } from "./types/api";
 
 export type Record = {
   datatypeId: DataType;
@@ -8,29 +8,25 @@ export type Record = {
   createdAt: number;
   updatedAt: number;
   details?: string;
-}
+};
 
 export class MemoryDatabase {
   _atomicRecords: Map<string, Record> = new Map();
 
-  constructor() {
-  }
+  constructor() {}
 
   atomicGet(
     datatypeId: DataType,
     ownerId: string,
     from: number | undefined
   ): atomic.get.Response {
+    const record = this._atomicRecords.get(datatypeId + ownerId);
 
-    const record = this._atomicRecords.get(datatypeId + ownerId)
+    if (record == undefined) return { status: "no-data" };
 
-    if (record == undefined)
-      return {status: "no-data"};
+    if (from == record.version) return { status: "up-to-date" };
 
-    if (from == record.version)
-      return {status: "up-to-date"};
-
-    return {status: "out-of-sync", ...record};
+    return { status: "out-of-sync", ...record };
   }
 
   atomicPost(
@@ -40,10 +36,10 @@ export class MemoryDatabase {
     payload: string,
     details: string | undefined
   ): atomic.post.Response {
-    const record = this._atomicRecords.get(datatypeId + ownerId)
+    const record = this._atomicRecords.get(datatypeId + ownerId);
 
     if (record !== undefined && version != record.version + 1)
-      return {status: "out-of-sync", ...record};
+      return { status: "out-of-sync", ...record };
 
     const now = Date.now();
 
@@ -54,9 +50,9 @@ export class MemoryDatabase {
       payload,
       createdAt: record?.createdAt ?? now,
       updatedAt: now,
-      details
+      details,
     });
 
-    return {status: "updated"};
+    return { status: "updated" };
   }
 }

@@ -7,8 +7,8 @@ export enum DataType {
 
 export namespace atomic {
   export namespace get {
-    export type NoData = { status: "no-data"; };
-    export type UpToDate = { status: "up-to-date"; };
+    export type NoData = { status: "no-data" };
+    export type UpToDate = { status: "up-to-date" };
     export type OutOfSync = {
       status: "out-of-sync";
       version: number;
@@ -17,11 +17,11 @@ export namespace atomic {
       updatedAt: number;
       info?: string;
     };
-    export type Response = UpToDate | NoData | OutOfSync
+    export type Response = UpToDate | NoData | OutOfSync;
   }
   export namespace post {
-    export type Request = { payload: string; }
-    export type Updated = { status: "updated"; };
+    export type Request = { payload: string };
+    export type Updated = { status: "updated" };
     export type OutOfSync = {
       status: "out-of-sync";
       version: number;
@@ -30,7 +30,7 @@ export namespace atomic {
       updatedAt: number;
       info?: string;
     };
-    export type Response = Updated | OutOfSync
+    export type Response = Updated | OutOfSync;
   }
 }
 
@@ -43,15 +43,15 @@ export namespace incremental {
     info?: string;
   };
   export namespace get {
-    export type NoData = { status: "no-data"; };
-    export type UpToDate = { status: "up-to-date"; };
+    export type NoData = { status: "no-data" };
+    export type UpToDate = { status: "up-to-date" };
     export type OutOfSync = { status: "out-of-sync"; updates: Update[] };
-    export type Response = UpToDate | NoData | OutOfSync
+    export type Response = UpToDate | NoData | OutOfSync;
   }
   export namespace post {
-    export type Request = { payload: string; }
-    export type Updated = { status: "updated"; };
+    export type Request = { payload: string };
+    export type Updated = { status: "updated" };
     export type OutOfSync = { status: "out-of-sync"; updates: Update[] };
-    export type Response = Updated | OutOfSync
+    export type Response = Updated | OutOfSync;
   }
 }
