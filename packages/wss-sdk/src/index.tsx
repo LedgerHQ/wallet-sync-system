@@ -7,11 +7,11 @@ import SuperJSON from "superjson";
 import crypto from "crypto";
 
 import type { AppRouter } from "@ledgerhq/wss-shared";
-import { AccountMetadata } from "./dataTypes/Account/1.0.0/types";
 import { v5 as uuidv5 } from "uuid";
-import { IV_LENGTH, UUIDV5_NAMESPACE } from "./constants";
 import { DataType } from "@ledgerhq/wss-shared/src/types/api";
 import { Observable, Subject } from "rxjs";
+import { AccountMetadata } from "./dataTypes/Account/1.0.0/types";
+import { IV_LENGTH, UUIDV5_NAMESPACE } from "./constants";
 import { schemaWalletDecryptedData } from "./dataTypes/schemas";
 import { WalletDecryptedData } from "./dataTypes/types";
 
@@ -27,10 +27,15 @@ type WalletSyncClientParams = {
 
 export class WalletSyncClient {
   private _version: number | undefined = undefined;
+
   private _intervalHandle: NodeJS.Timer | null = null;
+
   private _params: WalletSyncClientParams;
+
   private _subject: Subject<WalletDecryptedData> = new Subject();
+
   private _trpc: CreateTRPCProxyClient<AppRouter>;
+
   private _userId: string;
 
   constructor(params: WalletSyncClientParams) {
@@ -111,7 +116,7 @@ export class WalletSyncClient {
 
     const rawPayload = Buffer.concat([iv, encryptedData]);
 
-    this._trpc.atomicPost.mutate({
+    void this._trpc.atomicPost.mutate({
       datatypeId: DataType.Accounts,
       ownerId: this._userId,
       version: (this._version ?? 0) + 1,
@@ -126,13 +131,12 @@ export class WalletSyncClient {
     }
 
     // starting the update loop
-    this._intervalHandle = setInterval(
-      this._poll.bind(this),
-      this._params.pollFrequencyMs
-    );
+    this._intervalHandle = setInterval(() => {
+      void this._poll();
+    }, this._params.pollFrequencyMs);
 
     // doing an initial poll
-    this._poll();
+    void this._poll();
   }
 
   stop() {

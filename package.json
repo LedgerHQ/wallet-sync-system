@@ -1,5 +1,10 @@
 {
+  "name": "wallet-sync-system",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "clean": "git clean -fdX",
     "changelog": "changeset add",
@@ -16,11 +21,14 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.41.0",
     "eslint-config-custom": "workspace:*",
     "prettier": "^2.5.1",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.15.0",
-  "name": "wallet-sync-system"
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=7"
+  },
+  "packageManager": "pnpm@8.6.0"
 }

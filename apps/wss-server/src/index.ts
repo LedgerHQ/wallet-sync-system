@@ -1,8 +1,8 @@
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { appRouter } from "@ledgerhq/wss-shared";
-import cors from 'cors';
+import cors from "cors";
 
-async function main() {
+function main() {
   const server = createHTTPServer({
     middleware: cors(),
     router: appRouter,

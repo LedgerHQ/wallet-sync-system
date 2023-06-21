@@ -5,10 +5,13 @@
   "types": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.ts*\""
+    "format:check": "prettier --check \"src\"",
+    "format:fix": "prettier --write \"src\"",
+    "lint": "eslint --cache --ext .ts \"src\"",
+    "lint:fix": "eslint --cache --fix --ext .ts \"src\""
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
+    "eslint": "^8.41.0",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^4.5.2"
