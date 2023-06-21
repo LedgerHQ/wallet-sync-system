@@ -1,5 +1,10 @@
 {
+  "name": "wallet-sync-system",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "clean": "git clean -fdX",
     "changelog": "changeset add",
@@ -21,6 +26,9 @@
     "prettier": "^2.5.1",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.15.0",
-  "name": "wallet-sync-system"
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=7"
+  },
+  "packageManager": "pnpm@8.6.0"
 }
