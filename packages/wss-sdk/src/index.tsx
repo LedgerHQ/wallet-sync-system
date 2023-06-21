@@ -9,7 +9,7 @@ import crypto from "crypto";
 import type { AppRouter } from "@ledgerhq/wss-shared";
 import { AccountMetadata } from "./dataTypes/Account/1.0.0/types";
 import { v5 as uuidv5 } from "uuid";
-import { UUIDV5_NAMESPACE } from "./constants";
+import { IV_LENGTH, UUIDV5_NAMESPACE } from "./constants";
 import { DataType } from "@ledgerhq/wss-shared/src/types/api";
 import { Observable, Subject } from "rxjs";
 import { schemaWalletDecryptedData } from "./dataTypes/schemas";
@@ -68,8 +68,8 @@ export class WalletSyncClient {
         this._version = response.version;
 
         const rawPayload = Buffer.from(response.payload, "base64");
-        const iv = rawPayload.slice(0, 16);
-        const encryptedData = rawPayload.slice(16);
+        const iv = rawPayload.slice(0, IV_LENGTH);
+        const encryptedData = rawPayload.slice(IV_LENGTH);
 
         const decipher = crypto.createDecipheriv(
           "aes-256-cbc",
@@ -101,7 +101,7 @@ export class WalletSyncClient {
   saveData(data: SaveDataParams) {
     const serializedData = Buffer.from(JSON.stringify(data), "utf8");
 
-    const iv = crypto.randomBytes(16);
+    const iv = crypto.randomBytes(IV_LENGTH);
 
     const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, iv);
     const encryptedData = Buffer.concat([
