@@ -51,6 +51,6 @@ export class MemoryDatabase {
       details,
     });
 
-    return { status: "updated" };
+    return { status: "updated", version };
   }
 }
