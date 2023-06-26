@@ -28,7 +28,7 @@ export type AtomicGetResponse =
 // Post
 
 export type AtomicPostRequest = { payload: string };
-export type AtomicPostUpdated = { status: "updated", version: number };
+export type AtomicPostUpdated = { status: "updated"; version: number };
 export type AtomicPostOutOfSync = {
   status: "out-of-sync";
   version: number;
@@ -65,7 +65,7 @@ export type IncrementalGetResponse =
 // Post
 
 export type IncrementalPostRequest = { payload: string };
-export type IncrementalPostUpdated = { status: "updated", version: number };
+export type IncrementalPostUpdated = { status: "updated"; version: number };
 export type IncrementalPostOutOfSync = {
   status: "out-of-sync";
   updates: IncrementalUpdate[];

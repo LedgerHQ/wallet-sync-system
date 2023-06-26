@@ -60,14 +60,19 @@ export class WalletSyncClient {
       from: this._version,
     });
 
+    // eslint-disable-next-line default-case
     switch (response.status) {
-      case "no-data":
+      case "no-data": {
+        // eslint-disable-next-line no-console
         console.log("Server has no data");
         break;
-      case "up-to-date":
+      }
+      case "up-to-date": {
+        // eslint-disable-next-line no-console
         console.log("Up to date");
         break;
-      case "out-of-sync":
+      }
+      case "out-of-sync": {
         this._version = response.version;
 
         const rawPayload = Buffer.from(response.payload, "base64");
@@ -98,6 +103,7 @@ export class WalletSyncClient {
 
         this._subject.next(safeData);
         break;
+      }
     }
   }
 
