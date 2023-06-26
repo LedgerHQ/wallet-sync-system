@@ -1,7 +1,7 @@
-import { WalletSyncClient } from "@ledgerhq/wss-sdk";
+import { WalletSyncClient, DataType } from "@ledgerhq/wss-sdk";
 import "isomorphic-fetch";
 
-function main() {
+async function main() {
   const auth = Buffer.from(
     "UzLcjVdLnRmgxhsLS5SDDxP0jHUMUneHKYDEAy5oFw8=",
     "base64"
@@ -15,8 +15,13 @@ function main() {
 
   client.setVersion(0);
 
-  client.saveData({
-    accounts: [
+  client.observable().subscribe((walletData) => {
+    // eslint-disable-next-line no-console
+    console.log("new wallet data: ", walletData);
+  });
+
+  const result = await client.saveData(
+    [
       {
         type: "address",
         currencyId: "ethereum",
@@ -38,12 +43,11 @@ function main() {
         derivationMode: "native_segwit",
       },
     ],
-  });
+    DataType.Accounts
+  );
 
-  client.observable().subscribe((walletData) => {
-    // eslint-disable-next-line no-console
-    console.log("new wallet data: ", walletData);
-  });
+  // eslint-disable-next-line no-console
+  console.log("saved data:", result);
 
   /*
   example:
@@ -57,4 +61,4 @@ function main() {
   // client.poll();
 }
 
-main();
+void main();
