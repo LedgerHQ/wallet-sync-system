@@ -13,18 +13,14 @@
   },
   "dependencies": {
     "@ledgerhq/wss-shared": "workspace:*",
-    "@trpc/server": "^10.23.0",
-    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "koa": "^2.14.2",
     "koa-body": "^6.0.1",
     "koa-router": "^12.0.0",
-    "superjson": "^1.12.3",
     "winston": "^3.9.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.13",
     "@types/koa": "^2.13.6",
     "@types/koa-router": "^7.4.4",
     "@types/node": "^17.0.12",

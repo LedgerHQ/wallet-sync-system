@@ -66,12 +66,6 @@ importers:
       '@ledgerhq/wss-shared':
         specifier: workspace:*
         version: link:../../packages/wss-shared
-      '@trpc/server':
-        specifier: ^10.23.0
-        version: 10.23.0
-      cors:
-        specifier: ^2.8.5
-        version: 2.8.5
       dotenv:
         specifier: ^16.0.3
         version: 16.0.3
@@ -84,9 +78,6 @@ importers:
       koa-router:
         specifier: ^12.0.0
         version: 12.0.0
-      superjson:
-        specifier: ^1.12.3
-        version: 1.12.3
       winston:
         specifier: ^3.9.0
         version: 3.9.0
@@ -94,9 +85,6 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@types/cors':
-        specifier: ^2.8.13
-        version: 2.8.13
       '@types/koa':
         specifier: ^2.13.6
         version: 2.13.6
@@ -174,9 +162,6 @@ importers:
       '@ledgerhq/wss-shared':
         specifier: workspace:*
         version: link:../wss-shared
-      '@trpc/client':
-        specifier: ^10.23.0
-        version: 10.23.0(@trpc/server@10.23.0)
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -217,9 +202,6 @@ importers:
 
   packages/wss-shared:
     dependencies:
-      '@trpc/server':
-        specifier: ^10.23.0
-        version: 10.23.0
       superjson:
         specifier: ^1.12.3
         version: 1.12.3
@@ -640,18 +622,6 @@ packages:
     resolution: {integrity: sha512-V+MvGwaHH03hYhY+k6Ef/xKd6RYlc4q8WBx+2ANmipHJcKuktNcI/NgEsJgdSUF6Lw32njT6OnrRsKYCdgHjYw==}
     dev: false
 
-  /@trpc/client@10.23.0(@trpc/server@10.23.0):
-    resolution: {integrity: sha512-7hTh9OjVIx4Co3kUyIu94SjbUIuS2WKl3E5BMseYbNOHfeY5rqwkCsw0N5EHWszhIVttUMDE0oCf10tNhYEq1A==}
-    peerDependencies:
-      '@trpc/server': 10.23.0
-    dependencies:
-      '@trpc/server': 10.23.0
-    dev: false
-
-  /@trpc/server@10.23.0:
-    resolution: {integrity: sha512-0CPfGZK3v3gfAL8ylV5vDJVBQtPp47EB4Vgx6WItSXmwYQlLC39ZC3gkZ4I5cGpQKl4l3QrNNeUvIcse4hlMxA==}
-    dev: false
-
   /@tsconfig/node10@1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
     dev: true
@@ -701,12 +671,6 @@ packages:
       '@types/express': 4.17.17
       '@types/keygrip': 1.0.2
       '@types/node': 17.0.12
-
-  /@types/cors@2.8.13:
-    resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}
-    dependencies:
-      '@types/node': 17.0.12
-    dev: true
 
   /@types/express-serve-static-core@4.17.35:
     resolution: {integrity: sha512-wALWQwrgiB2AWTT91CB62b6Yt0sNHpznUXeZEcnPU3DRdlDIz74x8Qg1UUYKSVFi+va5vKOLYRBI1bRKiLLKIg==}
@@ -1402,14 +1366,6 @@ packages:
     engines: {node: '>=12.13'}
     dependencies:
       is-what: 4.1.15
-    dev: false
-
-  /cors@2.8.5:
-    resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
-    engines: {node: '>= 0.10'}
-    dependencies:
-      object-assign: 4.1.1
-      vary: 1.1.2
     dev: false
 
   /create-require@1.1.1:
