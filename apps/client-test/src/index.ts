@@ -7,13 +7,18 @@ async function main() {
     "base64"
   ); // await generateAuth();
 
+  let version: number | undefined;
+
   const client = new WalletSyncClient({
     url: "http://localhost:3000",
     pollFrequencyMs: 5000,
     auth,
+    clientInfo: "test/0.0.1"
+  },
+  {
+    onVersionUpdate: (newVersion) => { version = newVersion },
+    getVersion: () => version,
   });
-
-  client.setVersion(0);
 
   client.observable().subscribe((walletData) => {
     // eslint-disable-next-line no-console
@@ -43,22 +48,13 @@ async function main() {
         derivationMode: "native_segwit",
       },
     ],
-    "accounts"
   );
 
   // eslint-disable-next-line no-console
   console.log("saved data:", result);
 
-  /*
-  example:
-  client.subscribe((items) => {
-    // get new accounts items.accounts
-  })
-  */
-
+  // start polling
   client.start();
-
-  // client.poll();
 }
 
 void main();
