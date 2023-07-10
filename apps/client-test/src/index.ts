@@ -1,4 +1,4 @@
-import { WalletSyncClient, DataType } from "@ledgerhq/wss-sdk";
+import { WalletSyncClient } from "@ledgerhq/wss-sdk";
 import "isomorphic-fetch";
 
 async function main() {
@@ -43,7 +43,7 @@ async function main() {
         derivationMode: "native_segwit",
       },
     ],
-    DataType.Accounts
+    "accounts"
   );
 
   // eslint-disable-next-line no-console

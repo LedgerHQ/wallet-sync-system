@@ -28,6 +28,7 @@
   "dependencies": {
     "@ledgerhq/wss-shared": "workspace:*",
     "@trpc/client": "^10.23.0",
+    "axios": "^1.4.0",
     "rxjs": "^7.8.1",
     "superjson": "^1.12.3",
     "uuid": "^9.0.0",
