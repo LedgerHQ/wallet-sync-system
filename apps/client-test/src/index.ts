@@ -13,7 +13,8 @@ async function main() {
     url: "http://localhost:3000",
     pollFrequencyMs: 5000,
     auth,
-    clientInfo: "test/0.0.1"
+    clientInfo: "test/0.0.1",
+    publicKey: "aaaaa0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011"
   },
   {
     onVersionUpdate: (newVersion) => { version = newVersion },

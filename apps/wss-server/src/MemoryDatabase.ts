@@ -58,6 +58,6 @@ export class MemoryDatabase {
       updatedAt: now,
     });
 
-    return { status: "updated", version };
+    return { status: "updated" };
   }
 }

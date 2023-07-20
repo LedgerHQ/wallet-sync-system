@@ -8,9 +8,9 @@ import { Observable, Subject } from "rxjs";
 import axios, { Axios } from "axios";
 import { AccountMetadata } from "./dataTypes/Account/1.0.0/types";
 import { IV_LENGTH } from "./constants";
-import { schemaWalletDecryptedData } from "./dataTypes/schemas";
 import { WalletDecryptedData } from "./dataTypes/types";
 import { getUserIdForPrivateKey } from "./helpers";
+import { schemaAccountMetadata } from "./dataTypes/Account/1.0.0/schemas";
 
 type SaveDataParams = AccountMetadata[];
 
@@ -24,6 +24,7 @@ type WalletSyncClientParams = {
   url: string;
   auth: Buffer;
   clientInfo: string; // lld/1.0.0
+  publicKey: string;
 };
 
 export class WalletSyncClient {
@@ -49,7 +50,7 @@ export class WalletSyncClient {
     this._axios = axios.create({
       baseURL: params.url,
       headers: {
-        // "X-Ledger-Public-Key": params.auth.toString("hex"),
+        "X-Ledger-Public-Key": params.publicKey,
         "X-Ledger-Client-Version": params.clientInfo,
       },
     });
@@ -61,10 +62,18 @@ export class WalletSyncClient {
 
   private async _poll() {
     const version = this._versionManager.getVersion();
+    const now = new Date();
 
-    const rawResponse = await this._axios.get<unknown, unknown>(
+    const { data: rawResponse } = await this._axios.get<unknown>(
       `/atomic/v1/accounts`,
-      { params: { version } }
+      {
+        params: { version },
+        headers: {
+          "X-Ledger-Timestamp": now.toISOString(),
+          "X-Ledger-Signature":
+          "0000000000000000000000000000000000000000000000000000000000000000", // to be replaced once implemented in backend
+        },
+      }
     );
 
     const response = schemaAtomicGetResponse.parse(rawResponse);
@@ -102,14 +111,16 @@ export class WalletSyncClient {
         console.log(
           "Server has an update: version",
           response.version,
-          " updated at ",
-          response.updatedAt,
           parsedData
         );
-        const safeData = schemaWalletDecryptedData.parse(parsedData);
+
+        const safeData = schemaAccountMetadata.array().parse(parsedData);
+        // const safeData = schemaWalletDecryptedData.parse(parsedData);
 
         this._versionManager.onVersionUpdate(response.version);
-        this._subject.next(safeData);
+        this._subject.next({
+          accounts: safeData
+        });
         break;
       }
     }
@@ -117,6 +128,7 @@ export class WalletSyncClient {
 
   async saveData(data: SaveDataParams) {
     const version = this._versionManager.getVersion();
+    const now = new Date();
 
     const serializedData = Buffer.from(JSON.stringify(data), "utf8");
 
@@ -132,7 +144,7 @@ export class WalletSyncClient {
 
     const newVersion = (version ?? 0) + 1;
 
-    const rawResponse = await this._axios.post<unknown, unknown>(
+    const { data: rawResponse } = await this._axios.post<unknown>(
       `/atomic/v1/accounts`,
       {
         payload: rawPayload.toString("base64"),
@@ -142,7 +154,9 @@ export class WalletSyncClient {
           version: newVersion,
         },
         headers: {
-          "X-Ledger-Timestamp": Date.now(),
+          "X-Ledger-Timestamp": now.toISOString(),
+          "X-Ledger-Signature":
+            "0000000000000000000000000000000000000000000000000000000000000000", // to be replaced once implemented in backend
         },
       }
     );
@@ -150,7 +164,7 @@ export class WalletSyncClient {
     const response = schemaAtomicPostResponse.parse(rawResponse);
 
     if (response.status === "updated") {
-      this._versionManager.onVersionUpdate(response.version);
+      this._versionManager.onVersionUpdate(newVersion);
     }
 
     return response;

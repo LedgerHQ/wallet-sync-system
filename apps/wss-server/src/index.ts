@@ -1,4 +1,5 @@
 import Koa from "koa";
+import cors from "@koa/cors";
 import KoaRouter from "koa-router";
 import { koaBody } from "koa-body";
 
@@ -14,7 +15,6 @@ const database = new MemoryDatabase();
 const schemaAtomicGetQueryHeaders = z.object({
   "x-ledger-public-key": z.string(),
   "x-ledger-timestamp": z.string(),
-  "x-ledger-signature": z.string(),
   "x-ledger-client-version": z.string().optional(),
 });
 
@@ -30,7 +30,7 @@ router.get("/atomic/v1/:datatype", (ctx, next) => {
   const dataType = schemaDataType.parse(ctx.params.datatype);
 
   logger.info(
-    `atomicGet from ${headers["x-ledger-public-key"]}. From ${
+    `atomicGet from "${headers["x-ledger-public-key"]}" from ${
       params.version || "no version specified"
     }`
   );
@@ -87,6 +87,7 @@ router.post("/atomic/v1/:datatype", koaBody(), (ctx, next) => {
   return next();
 });
 
+app.use(cors());
 app.use(router.routes());
 app.use(router.allowedMethods());
 

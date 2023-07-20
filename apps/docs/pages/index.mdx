@@ -1,0 +1,52 @@
+---
+title: Ledger Live Apps Documentation
+---
+
+export function Card({ title, description, link, icon }) {
+  return (
+    <div className="card">
+      <div className="icon">{icon}</div>
+      <div className="title">{title}</div>
+      <p>{description}</p>
+      <a href={link} className="btn">Explore</a>
+    </div>
+  );
+}
+
+export function Hero() {
+  return (
+    <div className="hero">
+      <h1>Build Live Apps with Ledger Live</h1>
+      <p>Seamlessly integrate your applications into Ledger Live with our <em>Wallet API.</em></p>
+    </div>
+  );
+}
+
+
+<Hero />
+
+<div className="card-container">
+
+  <Card
+    title="React API"
+    description="Hooks and utilities for React developers."
+    link="./react"
+  />
+
+  <Card
+    title="Core API"
+    description="Vanilla JavaScript library for a direct approach."
+    link="./core"
+  />
+
+</div>
+
+<div className="resources-container">
+  <ul>
+    <li>
+      <a href="./appendix/migration-guide">
+        Migrating from Platform SDK ? <em>Head here.</em>
+      </a>
+    </li>
+  </ul>
+</div>

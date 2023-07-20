@@ -1,0 +1,30 @@
+{
+  "index": {
+    "title": "Introduction",
+    "theme": {
+      "breadcrumb": false,
+      "footer": true,
+      "sidebar": true,
+      "toc": true
+    }
+  },
+  "getting-started": {
+    "title": "Getting Started",
+    "theme": {
+      "toc": true
+    }
+  },
+  "configuration": {
+    "title": "Configuration",
+    "theme": {
+      "toc": true
+    }
+  },
+  "simulator": {
+    "title": "Simulator",
+    "theme": {
+      "toc": true
+    }
+  },
+  "hooks": "Hooks"
+}

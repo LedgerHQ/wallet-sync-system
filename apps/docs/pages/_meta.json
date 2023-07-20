@@ -1,0 +1,45 @@
+{
+  "index": {
+    "title": "Home",
+    "display": "hidden",
+    "theme": {
+      "breadcrumb": false,
+      "footer": true,
+      "sidebar": false,
+      "toc": true,
+      "pagination": false,
+      "layout": "full"
+    }
+  },
+  "react": {
+    "title": "React",
+    "type": "page"
+  },
+  "core": {
+    "title": "Core",
+    "type": "page"
+  },
+  "examples": {
+    "title": "Examples",
+    "type": "page"
+  },
+  "appendix": {
+    "title": "Appendix",
+    "type": "page"
+  },
+  "react-link": {
+    "title": "React",
+    "href": "/react",
+    "display": "hidden"
+  },
+  "core-link": {
+    "title": "Core",
+    "href": "/core",
+    "display": "hidden"
+  },
+  "examples-link": {
+    "title": "Examples & Tutorials",
+    "href": "/examples",
+    "display": "hidden"
+  }
+}
