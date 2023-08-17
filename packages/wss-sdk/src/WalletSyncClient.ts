@@ -62,6 +62,8 @@ export class WalletSyncClient {
   private async _poll() {
     const version = this._versionManager.getVersion();
 
+    console.log("polling...");
+
     const rawResponse = await this._axios.get<unknown, unknown>(
       `/atomic/v1/accounts`,
       {
@@ -75,7 +77,8 @@ export class WalletSyncClient {
       }
     );
 
-    const response = schemaAtomicGetResponse.parse(rawResponse);
+    // @ts-ignore
+    const response = schemaAtomicGetResponse.parse(rawResponse.data);
 
     // eslint-disable-next-line default-case
     switch (response.status) {
@@ -111,7 +114,7 @@ export class WalletSyncClient {
           "Server has an update: version",
           response.version,
           " updated at ",
-          response.updatedAt,
+          response.date,
           parsedData
         );
         const safeData = schemaWalletDecryptedData.parse(parsedData);
@@ -156,7 +159,8 @@ export class WalletSyncClient {
       }
     );
 
-    const response = schemaAtomicPostResponse.parse(rawResponse);
+    // @ts-ignore
+    const response = schemaAtomicPostResponse.parse(rawResponse.data);
 
     if (response.status === "updated") {
       this._versionManager.onVersionUpdate(response.version);
