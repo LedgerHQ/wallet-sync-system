@@ -10,7 +10,7 @@ async function main() {
   let version: number | undefined;
 
   const client = new WalletSyncClient({
-    url: "http://localhost:3000",
+    url: "https://cloud-sync-backend.aws.stg.ldg-tech.com",
     pollFrequencyMs: 5000,
     auth,
     clientInfo: "test/0.0.1"

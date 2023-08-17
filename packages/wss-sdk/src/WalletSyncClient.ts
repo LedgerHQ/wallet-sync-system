@@ -49,7 +49,9 @@ export class WalletSyncClient {
     this._axios = axios.create({
       baseURL: params.url,
       headers: {
-        // "X-Ledger-Public-Key": params.auth.toString("hex"),
+        "X-Ledger-Public-Key": "aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+        "X-Ledger-Timestamp": "2000-01-01T00:00:00.000000000+00:00",
+        "X-Ledger-Signature": "0000000000000000000000000000000000000000000000000000000000000000",
         "X-Ledger-Client-Version": params.clientInfo,
       },
     });
