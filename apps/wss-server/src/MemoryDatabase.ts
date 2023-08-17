@@ -9,8 +9,7 @@ export type Record = {
   ownerId: string;
   version: number;
   payload: string;
-  createdAt: number;
-  updatedAt: number;
+  date: string;
 };
 
 export class MemoryDatabase {
@@ -54,8 +53,7 @@ export class MemoryDatabase {
       ownerId,
       version,
       payload,
-      createdAt: record?.createdAt ?? now,
-      updatedAt: now,
+      date: now.toLocaleString(),
     });
 
     return { status: "updated", version };

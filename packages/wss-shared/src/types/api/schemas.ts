@@ -19,8 +19,7 @@ export const schemaAtomicGetOutOfSync = z.object({
   status: z.literal("out-of-sync"),
   version: z.number(),
   payload: z.string(),
-  createdAt: z.number(),
-  updatedAt: z.number(),
+  date: z.string(),
   info: z.string().optional(),
 });
 export const schemaAtomicGetResponse = z.discriminatedUnion("status", [
@@ -41,8 +40,7 @@ export const schemaAtomicPostOutOfSync = z.object({
   status: z.literal("out-of-sync"),
   version: z.number(),
   payload: z.string(),
-  createdAt: z.number(),
-  updatedAt: z.number(),
+  date: z.string(),
   info: z.string().optional(),
 });
 export const schemaAtomicPostResponse = z.discriminatedUnion("status", [
@@ -54,8 +52,7 @@ export const schemaAtomicPostResponse = z.discriminatedUnion("status", [
 export const schemaIncrementalUpdate = z.object({
   version: z.number(),
   payload: z.string(),
-  createdAt: z.number(),
-  updatedAt: z.number(),
+  date: z.string(),
   info: z.string().optional(),
 });
 

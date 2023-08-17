@@ -3,13 +3,13 @@ import "isomorphic-fetch";
 
 async function main() {
   const auth =
-    "aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"; // await generateAuth();
+    "5332dc8d574b9d19a0c61b0b4b94830f13f48c750c5277872980c4032e68170f"; // await generateAuth();
 
   let version: number | undefined;
 
   const client = new WalletSyncClient(
     {
-      url: "http://localhost:3000",
+      url: "https://cloud-sync-backend.aws.stg.ldg-tech.com",
       pollFrequencyMs: 5000,
       auth,
       clientInfo: "test/0.0.1",
