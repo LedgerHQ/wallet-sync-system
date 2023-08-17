@@ -48,11 +48,11 @@ export class WalletSyncClient {
     this._auth = Buffer.from(params.auth, "hex");
     this._params = params;
     this._versionManager = versionManager;
-    this._userId = getUserIdForPrivateKey(params.auth);
+    this._userId = getUserIdForPrivateKey(this._auth);
     this._axios = axios.create({
       baseURL: params.url,
       headers: {
-        // "X-Ledger-Public-Key": params.auth.toString("hex"),
+        "X-Ledger-Public-Key": params.auth,
         "X-Ledger-Client-Version": params.clientInfo,
       },
     });
@@ -65,12 +65,17 @@ export class WalletSyncClient {
   private async _poll() {
     const version = this._versionManager.getVersion();
 
-    const rawResponse = await this._axios.get<unknown, unknown>(
-      `/atomic/v1/accounts`,
-      { params: { version } }
-    );
+    const rawResponse = await this._axios.get<unknown>(`/atomic/v1/accounts`, {
+      params: { version },
+      headers: {
+        // TODO set these fields properly in the future
+        "X-Ledger-Timestamp": "2000-01-01T00:00:00.000000000+00:00",
+        "X-Ledger-Signature":
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      },
+    });
 
-    const response = schemaAtomicGetResponse.parse(rawResponse);
+    const response = schemaAtomicGetResponse.parse(rawResponse.data);
 
     // eslint-disable-next-line default-case
     switch (response.status) {
@@ -102,7 +107,7 @@ export class WalletSyncClient {
           "Server has an update: version",
           response.version,
           " updated at ",
-          response.updatedAt,
+          response.date,
           parsedData
         );
         const safeData = schemaWalletDecryptedData.parse(parsedData);
@@ -131,7 +136,7 @@ export class WalletSyncClient {
 
     const newVersion = (version ?? 0) + 1;
 
-    const rawResponse = await this._axios.post<unknown, unknown>(
+    const rawResponse = await this._axios.post<unknown>(
       `/atomic/v1/accounts`,
       {
         payload: rawPayload.toString("base64"),
@@ -141,12 +146,14 @@ export class WalletSyncClient {
           version: newVersion,
         },
         headers: {
-          "X-Ledger-Timestamp": Date.now(),
+          "X-Ledger-Timestamp": "2000-01-01T00:00:00.000000000+00:00",
+          "X-Ledger-Signature":
+            "0000000000000000000000000000000000000000000000000000000000000000",
         },
       }
     );
 
-    const response = schemaAtomicPostResponse.parse(rawResponse);
+    const response = schemaAtomicPostResponse.parse(rawResponse.data);
 
     if (response.status === "updated") {
       this._versionManager.onVersionUpdate(response.version);

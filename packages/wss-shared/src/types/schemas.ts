@@ -5,8 +5,7 @@ export const schemaEncryptedClientData = z.object({
   ownerId: z.string(),
   dataTypeId: z.number(),
   encryptedData: z.string(),
-  createdAt: z.number(),
-  updatedAt: z.number(),
+  date: z.string(),
 });
 
 export type EncryptedClientData = z.infer<typeof schemaEncryptedClientData>;
