@@ -22,7 +22,7 @@ type WalletSyncVersionManager = {
 type WalletSyncClientParams = {
   pollFrequencyMs: number;
   url: string;
-  auth: Buffer;
+  auth: string;
   clientInfo: string; // lld/1.0.0
 };
 
@@ -39,10 +39,13 @@ export class WalletSyncClient {
 
   private _userId: string;
 
+  private _auth: Buffer;
+
   constructor(
     params: WalletSyncClientParams,
     versionManager: WalletSyncVersionManager
   ) {
+    this._auth = Buffer.from(params.auth, "hex");
     this._params = params;
     this._versionManager = versionManager;
     this._userId = getUserIdForPrivateKey(params.auth);
@@ -86,11 +89,7 @@ export class WalletSyncClient {
         const iv = rawPayload.slice(0, IV_LENGTH);
         const encryptedData = rawPayload.slice(IV_LENGTH);
 
-        const decipher = crypto.createDecipheriv(
-          "aes-256-cbc",
-          this._params.auth,
-          iv
-        );
+        const decipher = crypto.createDecipheriv("aes-256-cbc", this._auth, iv);
 
         const decryptedData = Buffer.concat([
           decipher.update(encryptedData),
@@ -122,7 +121,7 @@ export class WalletSyncClient {
 
     const iv = crypto.randomBytes(IV_LENGTH);
 
-    const cipher = crypto.createCipheriv("aes-256-cbc", this._params.auth, iv);
+    const cipher = crypto.createCipheriv("aes-256-cbc", this._auth, iv);
     const encryptedData = Buffer.concat([
       cipher.update(serializedData),
       cipher.final(),

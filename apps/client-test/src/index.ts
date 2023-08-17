@@ -2,10 +2,8 @@ import { WalletSyncClient } from "@ledgerhq/wss-sdk";
 import "isomorphic-fetch";
 
 async function main() {
-  const auth = Buffer.from(
-    "UzLcjVdLnRmgxhsLS5SDDxP0jHUMUneHKYDEAy5oFw8=",
-    "base64"
-  ); // await generateAuth();
+  const auth =
+    "aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"; // await generateAuth();
 
   let version: number | undefined;
 
