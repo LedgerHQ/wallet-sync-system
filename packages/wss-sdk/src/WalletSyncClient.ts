@@ -50,8 +50,6 @@ export class WalletSyncClient {
       baseURL: params.url,
       headers: {
         "X-Ledger-Public-Key": "aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
-        "X-Ledger-Timestamp": "2000-01-01T00:00:00.000000000+00:00",
-        "X-Ledger-Signature": "0000000000000000000000000000000000000000000000000000000000000000",
         "X-Ledger-Client-Version": params.clientInfo,
       },
     });
@@ -66,7 +64,15 @@ export class WalletSyncClient {
 
     const rawResponse = await this._axios.get<unknown, unknown>(
       `/atomic/v1/accounts`,
-      { params: { version } }
+      {
+        params: {
+          version
+        },
+        headers: {
+          "X-Ledger-Timestamp": '2000-01-01T00:00:00.000000000+00:00',
+          "X-Ledger-Signature": "0000000000000000000000000000000000000000000000000000000000000000",
+        }
+      }
     );
 
     const response = schemaAtomicGetResponse.parse(rawResponse);
@@ -144,7 +150,8 @@ export class WalletSyncClient {
           version: newVersion,
         },
         headers: {
-          "X-Ledger-Timestamp": Date.now(),
+          "X-Ledger-Timestamp": '2000-01-01T00:00:00.000000000+00:00',
+          "X-Ledger-Signature": "0000000000000000000000000000000000000000000000000000000000000000",
         },
       }
     );
