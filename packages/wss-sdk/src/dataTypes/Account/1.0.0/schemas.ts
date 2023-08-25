@@ -8,5 +8,4 @@ export const schemaAccountMetadata = z.object({
   derivationMode: z.string(),
   name: z.string(),
   index: z.number(),
-  balance: z.string(),
 });

@@ -1,5 +1,4 @@
 import crypto from "crypto";
-
 import {
   schemaAtomicGetResponse,
   schemaAtomicPostResponse,
@@ -33,7 +32,7 @@ export class WalletSyncClient {
 
   private _params: WalletSyncClientParams;
 
-  private _subject: Subject<WalletDecryptedData> = new Subject();
+  private _subject: Subject<[WalletDecryptedData, number]> = new Subject();
 
   private _axios: Axios;
 
@@ -49,18 +48,27 @@ export class WalletSyncClient {
     this._params = params;
     this._versionManager = versionManager;
     this._userId = getUserIdForPrivateKey(this._auth);
+
+    // FIXME quick hack. we will need to implement this properly. just to get a unique user
+    const publicKey = `aaaaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000${this._userId.slice(
+      this._userId.length - 8
+    )}`;
+
     this._axios = axios.create({
       baseURL: params.url,
       headers: {
-        "X-Ledger-Public-Key":
-          // FIXME TODO derivated from Auth?
-          "aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+        "X-Ledger-Public-Key": publicKey,
         "X-Ledger-Client-Version": params.clientInfo,
       },
     });
   }
 
-  observable(): Observable<WalletDecryptedData> {
+  /**
+   * allows consumer to get incoming updates
+   * the data with the version associated to it is attached and
+   * it is the userland responsability to do the onVersionUpdate associated to it once the data is entirely handled.
+   */
+  observable(): Observable<[WalletDecryptedData, number]> {
     return this._subject;
   }
 
@@ -82,13 +90,9 @@ export class WalletSyncClient {
     // eslint-disable-next-line default-case
     switch (response.status) {
       case "no-data": {
-        // eslint-disable-next-line no-console
-        console.log("Server has no data");
         break;
       }
       case "up-to-date": {
-        // eslint-disable-next-line no-console
-        console.log("Up to date");
         break;
       }
       case "out-of-sync": {
@@ -105,17 +109,9 @@ export class WalletSyncClient {
 
         const parsedData: unknown = JSON.parse(decryptedData.toString());
 
-        console.log(
-          "Server has an update: version",
-          response.version,
-          " updated at ",
-          response.date,
-          parsedData
-        );
         const safeData = schemaWalletDecryptedData.parse(parsedData);
 
-        this._versionManager.onVersionUpdate(response.version);
-        this._subject.next(safeData);
+        this._subject.next([safeData, response.version]);
         break;
       }
     }
@@ -157,9 +153,13 @@ export class WalletSyncClient {
 
     const response = schemaAtomicPostResponse.parse(rawResponse.data);
 
+    // FIXME code was commented because: why doing this here? shouldn't we receive it on the observable() side anyway?
+    // I think doing this here introduce race conditions due to fact the http POST was async
+    /*
     if (response.status === "updated") {
       this._versionManager.onVersionUpdate(response.version);
     }
+    */
 
     return response;
   }

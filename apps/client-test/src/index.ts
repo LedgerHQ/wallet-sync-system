@@ -22,9 +22,9 @@ async function main() {
     }
   );
 
-  client.observable().subscribe((walletData) => {
+  client.observable().subscribe((data) => {
     // eslint-disable-next-line no-console
-    console.log("new wallet data: ", walletData);
+    console.log("new wallet data: ", data);
   });
 
   const result = await client.saveData([
